@@ -1,0 +1,53 @@
+{
+  "name": "Institutional Order Flow - Rejection / Sweep / Reversal",
+  "version": "0.1.0",
+  "author": "OpenTrader Pro",
+  "description": "Techniques order-flow avancées (fade de sweep, rejet sur absorption, retournement après défense de sweep, suivi de cassure sur déséquilibre, suivi de cascade de stops, confluence) basées sur les signaux détectés par Plugins/OrderFlowSuite.",
+  "params": {
+    "symbol": "ESU6",
+    "tick_size": 0.25,
+    "default_quantity": 1,
+    "stop_loss_ticks": 6,
+    "take_profit_ticks": 3,
+    "max_concurrent_positions": 1,
+    "cooldown_s": 15,
+    "ai_filter": {
+      "enabled": false,
+      "min_probability": 0.55,
+      "_desc": "N'entre que si le modèle Engines/SignalAI.py (entraîné via le Backtest) estime la probabilité de succès >= min_probability. Nécessite d'avoir lancé au moins un entraînement depuis le dock Backtest."
+    },
+    "rules": {
+      "sweep_fade": {
+        "enabled": true,
+        "min_size": 50,
+        "_desc": "Fade d'un sweep de liquidité : souvent un piège à stops avant retournement."
+      },
+      "rejection_absorption": {
+        "enabled": true,
+        "min_size": 80,
+        "_desc": "Rejet de prix : un gros ordre passif absorbe l'agressivité sans céder le niveau."
+      },
+      "sweep_defense_reversal": {
+        "enabled": true,
+        "min_size": 0,
+        "_desc": "Retournement confirmé après défense d'un sweep (signal composite SWEEP_DEFENSE)."
+      },
+      "imbalance_breakout": {
+        "enabled": false,
+        "min_size": 60,
+        "_desc": "Suivi de cassure quand un mur de déséquilibre du carnet cède."
+      },
+      "stop_cascade_follow": {
+        "enabled": false,
+        "min_size": 0,
+        "_desc": "Suivi d'une cascade de stops déclenchée (momentum)."
+      },
+      "confluence_high_conviction": {
+        "enabled": true,
+        "min_size": 0,
+        "quantity_multiplier": 2.0,
+        "_desc": "Plusieurs concepts alignés simultanément : conviction plus forte, taille doublée par défaut."
+      }
+    }
+  }
+}

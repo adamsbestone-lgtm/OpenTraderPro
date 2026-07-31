@@ -1,0 +1,6 @@
+PySide6>=6.7
+numpy>=1.26
+numba>=0.60
+polars>=1.0
+pyzmq>=26.0
+cryptography>=42.0

@@ -1,0 +1,14 @@
+{
+  "name": "MarketMaker HFT (exemple)",
+  "version": "0.1.0",
+  "author": "OpenTrader Pro",
+  "description": "Exemple de market maker haute fréquence : cote en permanence au meilleur bid/ask avec un spread cible, annule/replace à chaque tick.",
+  "params": {
+    "hft": true,
+    "symbol": "ESU6",
+    "quantity": 1,
+    "target_spread_ticks": 2,
+    "tick_size": 0.25,
+    "max_inventory": 3
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Scalper - Momentum d'agressivité",
+  "version": "0.1.0",
+  "author": "OpenTrader Pro",
+  "description": "Entre dans le sens d'une rafale de trades agressifs, sort après un objectif de points ou un stop.",
+  "params": {
+    "symbol": "ESU6",
+    "quantity": 1,
+    "aggressive_window": 5,
+    "target_ticks": 4,
+    "stop_ticks": 3,
+    "tick_size": 0.25,
+    "cooldown_ticks": 20
+  }
+}

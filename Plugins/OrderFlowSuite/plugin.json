@@ -1,0 +1,6 @@
+{
+  "name": "Order Flow Suite (ES/MES)",
+  "version": "0.1.0",
+  "author": "OpenTrader Pro",
+  "description": "Portage Python de l'add-on Bookmap 'ES Order Flow (custom)' : imbalance empilée, absorption/iceberg (bloc vs fragmentée), sweep, cascade de stops, out-of-spread, zone défendue, inside print, reliquat post-sweep, sweep+défense, confirmation croisée, score de confluence. Ajoute une fenêtre 'Order Flow' avec les signaux en direct, réglages ajustables à chaud, et un mode trading automatique optionnel (avec confirmation de sécurité)."
+}
