@@ -5,6 +5,7 @@ et relaie tick/depth/bar/order/position/timer vers chaque bot actif.
 from __future__ import annotations
 import importlib.util
 import json
+import sys
 from pathlib import Path
 from typing import Dict
 
@@ -13,7 +14,14 @@ from PySide6.QtCore import QTimer
 from Core.EventBus import EventBus
 from Bots.Strategy import BaseStrategy
 
-BOTS_DIR = Path(__file__).parent
+if getattr(sys, "frozen", False):
+    # Mode .exe (PyInstaller) : la racine des données est sys._MEIPASS
+    _BASE_DIR = Path(sys._MEIPASS)
+else:
+    # Mode développement : remonter d'un niveau depuis Engines/ vers la racine du projet
+    _BASE_DIR = Path(__file__).parent.parent
+
+BOTS_DIR = _BASE_DIR / "Bots"
 
 
 class BotEngine:
