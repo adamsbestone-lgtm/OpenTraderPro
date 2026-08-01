@@ -13,6 +13,8 @@ from typing import Any, Callable, Dict, Optional
 
 class BaseBroker(ABC):
     name: str = "BaseBroker"
+    required_credentials: tuple = ()
+    has_environment: bool = False  # affiche un choix Demo/Live dans la fenêtre de login
 
     def __init__(self, bus) -> None:
         self.bus = bus
