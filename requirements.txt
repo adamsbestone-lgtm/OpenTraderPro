@@ -4,3 +4,5 @@ numba>=0.60
 polars>=1.0
 pyzmq>=26.0
 cryptography>=42.0
+requests>=2.31
+websocket-client>=1.7
