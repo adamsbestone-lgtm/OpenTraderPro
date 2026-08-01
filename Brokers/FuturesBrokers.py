@@ -10,11 +10,6 @@ Implémentation réelle à faire via le SDK officiel de chaque fournisseur :
 from Brokers.StubBroker import StubBroker
 
 
-class TradovateBroker(StubBroker):
-    name = "Tradovate"
-    required_credentials = ("username", "password", "app_id", "app_secret", "cid", "sec")
-
-
 class RithmicBroker(StubBroker):
     name = "Rithmic"
     required_credentials = ("username", "password", "system_name", "gateway")
