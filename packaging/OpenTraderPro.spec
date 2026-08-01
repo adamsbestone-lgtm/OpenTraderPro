@@ -17,6 +17,7 @@ a = Analysis(
     hiddenimports=[
         "PySide6.QtCore", "PySide6.QtGui", "PySide6.QtWidgets",
         "cryptography.fernet",
+        "requests", "websocket", "websocket._app",
     ],
     hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[],
     noarchive=False, cipher=block_cipher,
