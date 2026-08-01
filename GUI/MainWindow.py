@@ -34,7 +34,8 @@ from Widgets.PaceOfTape.PaceOfTapeWidget import PaceOfTapeWidget
 
 class MainWindow(QMainWindow):
     def __init__(self, bus: EventBus, db, settings, order_engine, position_engine,
-                 risk_engine, bot_engine, plugin_engine, broker_engine, replay_engine) -> None:
+                 risk_engine, bot_engine, plugin_engine, broker_engine, replay_engine,
+                 latency_monitor=None) -> None:
         super().__init__()
         self.setWindowTitle("OpenTrader Pro")
         self.bus = bus
@@ -47,6 +48,7 @@ class MainWindow(QMainWindow):
         self.plugin_engine = plugin_engine
         self.broker_engine = broker_engine
         self.replay_engine = replay_engine  # utilisé par le plugin Replay
+        self.latency_monitor = latency_monitor  # Engines/LatencyMonitor.py (mesure de latence)
         self.dock_manager = DockManager(self, db)
 
         symbol = settings.get("default_symbol", "ESU6")
