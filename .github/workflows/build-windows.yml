@@ -8,28 +8,17 @@ on:
 jobs:
   build-windows-exe:
     runs-on: windows-latest
-
     steps:
-      - name: Récupérer le code
-        uses: actions/checkout@v4
-
-      - name: Installer Python 3.13
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-
-      - name: Installer les dépendances
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-
-      - name: Compiler avec PyInstaller
-        run: pyinstaller packaging\OpenTraderPro.spec --noconfirm
-
-      - name: Publier l'exécutable (artifact téléchargeable)
-        uses: actions/upload-artifact@v4
+      - run: pyinstaller packaging\OpenTraderPro.spec --noconfirm
+      - uses: actions/upload-artifact@v4
         with:
           name: OpenTraderPro-windows
           path: dist/OpenTraderPro/
-          retention-days: 30
