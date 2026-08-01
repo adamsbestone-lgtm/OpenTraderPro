@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
 from Core.EventBus import EventBus
 from GUI.DockManager import DockManager
 from GUI.Theme import get_theme
+from GUI.BrokerLoginDialog import BrokerLoginDialog
 
 from Widgets.DOM.DOMWidget import DOMWidget
 from Widgets.TimeSales.TimeSalesWidget import TimeSalesWidget
@@ -29,15 +30,11 @@ from Widgets.AddonManager.AddonManagerWidget import AddonManagerWidget
 from Widgets.HFT.HFTWidget import HFTWidget
 from Widgets.ReconstructedTape.ReconstructedTapeWidget import ReconstructedTapeWidget
 from Widgets.PaceOfTape.PaceOfTapeWidget import PaceOfTapeWidget
-from Widgets.Backtest.BacktestWidget import BacktestWidget
-from Widgets.Latency.LatencyWidget import LatencyWidget
-from Engines.LatencyMonitor import LatencyMonitor
 
 
 class MainWindow(QMainWindow):
     def __init__(self, bus: EventBus, db, settings, order_engine, position_engine,
-                 risk_engine, bot_engine, plugin_engine, broker_engine, replay_engine,
-                 latency_monitor=None) -> None:
+                 risk_engine, bot_engine, plugin_engine, broker_engine, replay_engine) -> None:
         super().__init__()
         self.setWindowTitle("OpenTrader Pro")
         self.bus = bus
@@ -80,10 +77,6 @@ class MainWindow(QMainWindow):
                         Qt.DockWidgetArea.RightDockWidgetArea)
         self._add_dock("HFT", HFTWidget(bus, bot_engine, settings, symbol=symbol),
                         Qt.DockWidgetArea.LeftDockWidgetArea)
-        self._add_dock("Backtest", BacktestWidget(db, symbol=symbol, settings=settings),
-                        Qt.DockWidgetArea.LeftDockWidgetArea)
-        self._add_dock("Latence", LatencyWidget(latency_monitor or LatencyMonitor(bus)),
-                        Qt.DockWidgetArea.RightDockWidgetArea)
 
         self._build_toolbar()
         self._build_menu()
@@ -99,13 +92,13 @@ class MainWindow(QMainWindow):
         # Jigsaw ne publie pas de dimensions officielles : ces valeurs sont
         # une disposition de départ raisonnable, ajustable puis enregistrable
         # via le menu "Espace de travail".
-        left_docks = [self._docks[n] for n in ("DOM", "Time & Sales", "Reconstructed Tape", "HFT", "Backtest") if n in self._docks]
+        left_docks = [self._docks[n] for n in ("DOM", "Time & Sales", "Reconstructed Tape", "HFT") if n in self._docks]
         if left_docks:
-            self.resizeDocks(left_docks, [420, 220, 220, 180, 260], Qt.Orientation.Vertical)
+            self.resizeDocks(left_docks, [420, 220, 220, 180], Qt.Orientation.Vertical)
 
-        right_docks = [self._docks[n] for n in ("Pace of Tape", "Orders", "Positions", "Account", "Add-ons", "Latence") if n in self._docks]
+        right_docks = [self._docks[n] for n in ("Pace of Tape", "Orders", "Positions", "Account", "Add-ons") if n in self._docks]
         if right_docks:
-            self.resizeDocks(right_docks, [160, 220, 220, 180, 160, 160], Qt.Orientation.Vertical)
+            self.resizeDocks(right_docks, [160, 220, 220, 180, 160], Qt.Orientation.Vertical)
 
         bottom_docks = [self._docks[n] for n in ("Alerts", "News", "Event Log") if n in self._docks]
         if bottom_docks:
@@ -201,9 +194,32 @@ class MainWindow(QMainWindow):
 
     def _switch_broker(self, name: str) -> None:
         self.broker_engine.set_active(name)
-        connected = self.broker_engine.connect()
-        status = "connecté" if connected else "échec de connexion (identifiants requis, voir Event Log)"
+        broker = self.broker_engine.active
+
+        if not broker.required_credentials:
+            # Pas d'identifiants nécessaires (ex : Simulation) -> connexion directe
+            connected = self.broker_engine.connect()
+            status = "connecté" if connected else "échec de connexion (voir Event Log)"
+            self.statusBar().showMessage(f"Broker actif : {name} ({status})")
+            return
+
+        dialog = BrokerLoginDialog(
+            broker_name=name,
+            required_credentials=broker.required_credentials,
+            settings=self.settings,
+            supports_environment=broker.has_environment,
+            parent=self,
+        )
+        if dialog.exec() != BrokerLoginDialog.DialogCode.Accepted or dialog.result_credentials is None:
+            self.statusBar().showMessage(f"Connexion à {name} annulée")
+            return
+
+        connected = self.broker_engine.connect(name, **dialog.result_credentials)
+        status = "connecté" if connected else "échec de connexion (voir Event Log)"
         self.statusBar().showMessage(f"Broker actif : {name} ({status})")
+        if connected:
+            symbol = self.settings.get("default_symbol", "ESU6")
+            broker.subscribe_market_data(symbol)
 
     def _save_workspace(self) -> None:
         name, ok = QInputDialog.getText(self, "Enregistrer l'espace de travail", "Nom du layout :")
