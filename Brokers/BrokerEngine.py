@@ -10,7 +10,8 @@ from typing import Callable, Dict, Optional
 from Core.EventBus import EventBus
 from Brokers.BaseBroker import BaseBroker
 from Brokers.SimBroker import SimBroker
-from Brokers.FuturesBrokers import TradovateBroker, RithmicBroker, CQGBroker, InteractiveBrokersBroker
+from Brokers.TradovateBroker import TradovateBroker
+from Brokers.FuturesBrokers import RithmicBroker, CQGBroker, InteractiveBrokersBroker
 from Brokers.CryptoBrokers import BinanceBroker, BybitBroker, BitgetBroker, KrakenBroker, CoinbaseBroker
 
 AVAILABLE_BROKERS: Dict[str, type[BaseBroker]] = {
